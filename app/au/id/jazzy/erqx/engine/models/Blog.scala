@@ -53,6 +53,13 @@ trait BlogTheme {
     au.id.jazzy.erqx.themes.jazzy.html.blogPosts(blog, router, title, posts, previous, next)
 
   /**
+    * The template for rendering a list of blog posts for inclusion via AJAX
+    */
+  def ajaxBlogPosts(blog: Blog, router: BlogReverseRouter, posts: List[(BlogPost, String)])(
+    implicit req: RequestHeader, messages: Messages): Html =
+    au.id.jazzy.erqx.themes.jazzy.html.ajaxBlogPosts(blog, router, posts)
+
+  /**
    * The template for rendering a page
    */
   def page(blog: Blog, router: BlogReverseRouter, page: Page, content: String)(implicit req: RequestHeader, messages: Messages): Html =

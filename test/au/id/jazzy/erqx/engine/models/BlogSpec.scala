@@ -59,7 +59,7 @@ class BlogSpec extends Specification {
   }
 
   def post(id: String, year: Int, month: Int, day: Int, tags: String*) =
-    BlogPost(id, id, id, new DateTime(year, month, day, 0, 0), id, "md", Set(tags:_*), Yaml.empty)
+    BlogPost(id, id, id, new DateTime(year, month, day, 0, 0), "some_author", id, "md", Set(tags:_*), Yaml.empty)
   def blog(posts: BlogPost*) = new Blog("", posts.toList, Nil, "", "", BlogInfo("", None, "", ""))
 
 }

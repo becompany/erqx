@@ -49,12 +49,21 @@ class BlogController(val messagesApi: MessagesApi, blogActor: ActorSelection, ro
     paged(req.blog.forTag(tag).getOrElse(Nil), page, Some(messages("posts.by.tag", tag)))(p => router.tag(tag, p))
   }
 
+  def latest(num: Int) = BlogAction.async { implicit req =>
+    val posts = req.blog.posts.take(num)
+    Future.sequence(posts.map { post =>
+      (blogActor ? RenderPost(req.blog, post)).mapTo[Option[BlogPostContent]].map(_.map(post -> _.summaryHtml))
+    }).map { loaded =>
+      Ok(req.blog.info.theme.ajaxBlogPosts(req.blog, router, loaded.flatMap(_.toSeq)))
+    }
+  }
+
   def view(year: Int, month: Int, day: Int, permalink: String) = BlogAction.async { implicit req =>
     req.blog.forYear(year).forMonth(month).forDay(day).forPermalink(permalink) match {
       case Some(post) =>
-        (blogActor ? RenderPost(req.blog, post)).mapTo[Option[String]].map {
-          case Some(rendered) =>
-            Ok(req.blog.info.theme.blogPost(req.blog, router, post, rendered))
+        (blogActor ? RenderPost(req.blog, post)).mapTo[Option[BlogPostContent]].map {
+          case Some(content) =>
+            Ok(req.blog.info.theme.blogPost(req.blog, router, post, content.bodyHtml))
           case None => notFound(req.blog)
         }
       case None => sync(notFound(req.blog))
@@ -108,7 +117,7 @@ class BlogController(val messagesApi: MessagesApi, blogActor: ActorSelection, ro
 
     // Load blog posts
     Future.sequence(posts.map { post =>
-      (blogActor ? RenderPost(req.blog, post)).mapTo[Option[String]].map(_.map(post -> _))
+      (blogActor ? RenderPost(req.blog, post)).mapTo[Option[BlogPostContent]].map(_.map(post -> _.bodyHtml))
     }).map { loaded =>
       Ok(req.blog.info.theme.blogPosts(req.blog, router, title, loaded.flatMap(_.toSeq), previous, next))
     }
@@ -118,7 +127,7 @@ class BlogController(val messagesApi: MessagesApi, blogActor: ActorSelection, ro
     val posts = req.blog.posts.take(5)
     val absoluteUri = router.index().absoluteURL()
     Future.sequence(posts.map { post =>
-      (blogActor ? RenderPost(req.blog, post, Some(absoluteUri))).mapTo[Option[String]].map(_.map(post -> _))
+      (blogActor ? RenderPost(req.blog, post, Some(absoluteUri))).mapTo[Option[BlogPostContent]].map(_.map(post -> _.bodyHtml))
     }).map { loaded =>
       Ok(FeedFormatter.atom(req.blog, loaded.flatMap(_.toSeq), router))
     }

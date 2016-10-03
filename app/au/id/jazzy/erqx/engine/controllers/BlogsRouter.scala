@@ -77,8 +77,8 @@ class BlogRouter(controller: BlogController) extends SimpleRouter { self =>
     // By tag
     case GET(p"/tags/$tag.html" ? Page(page)) => controller.tag(tag, page)
 
-    // Atom feed
-    case GET(p"/atom.xml") => controller.atom()
+    // Latest
+    case GET(p"/latest/${int(num)}<\d+>") => controller.latest(num)
 
     // Fetch
     case POST(p"/fetch/$key") => controller.fetch(key)
@@ -123,6 +123,8 @@ class BlogReverseRouter(path: => String, globalPath: => String) {
     Call("GET", withPaging(f"$path%s/$year%d/$month%02d/$day%02d.html", page))
 
   def tag(tag: String, page: Page = defaultPage) = Call("GET", withPaging(s"$path/tags/${encode(tag)}.html", page))
+
+  def latest(num: Int) = Call("GET", s"$path/latest/$num")
 
   def atom() = Call("GET", s"$path/atom.xml")
 

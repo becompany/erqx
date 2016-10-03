@@ -156,7 +156,7 @@ object MigratePebbleBlog {
         val path = id + ".html"
         val tags = tagsStr.split(" +").map(_.replace('+', ' ').trim()).toSet.filter(_.nonEmpty)
 
-        val post = BlogPost(id, path, title, date, permalinkTitle, "html", tags, Yaml.empty)
+        val post = BlogPost(id, path, title, date, "nobody", permalinkTitle, "html", tags, Yaml.empty)
 
         val comments = parseComments(xml)
         Some((post, transformPost(body), comments))

@@ -1,10 +1,12 @@
 package au.id.jazzy.erqx.engine.actors
 
 import akka.actor.Actor
+
 import scala.concurrent.blocking
 import play.doc.PlayDoc
 import au.id.jazzy.erqx.engine.services.git.{GitFileRepository, GitRepository}
-import au.id.jazzy.erqx.engine.models.Blog
+import au.id.jazzy.erqx.engine.models.{Blog, BlogPostContent}
+import au.id.jazzy.erqx.engine.services.ContentParser
 
 /**
  * Actor responsible for loading and rendering files
@@ -31,28 +33,27 @@ class FileLoader(gitRepository: GitRepository) extends Actor {
   }
 
   private def render(blog: Blog, path: String, format: String, absoluteUri: Option[String]) = {
-    val rendered = blocking {
+    val content = blocking {
       gitRepository.loadContent(blog.hash, path).map { content =>
-      // Strip off front matter
-        val lines = content.split("\n").dropWhile(_.trim.isEmpty)
-        val body = if (lines.headOption.exists(_.trim == "---")) {
-          lines.drop(1).dropWhile(_.trim != "---").drop(1).mkString("\n")
-        } else content
-
         format match {
           case "md" =>
+            /*
             val repo = new GitFileRepository(gitRepository, blog.hash, None)
-            new PlayDoc(repo, repo, "", "").render(body, None)
+            val doc = new PlayDoc(repo, repo, "", "")
+            val rendered = postContent.map(doc.render(_, None))
+            BlogPostContent(ContentParser.replaceLinks(rendered.summary), rendered.body)
+            */
+            content
           case _ =>
-            body
+            content
         }
       }
     }
     val uriAdjusted = absoluteUri.flatMap { uri =>
-      rendered.map(c => replaceCommonUris(c, uri))
-    }.orElse(rendered)
+      content.map(replaceCommonUris(_, uri))
+    }.orElse(content)
 
-    sender ! uriAdjusted
+    sender ! uriAdjusted.map(new BlogPostContent(_))
   }
 
   private def replaceCommonUris(s: String, uri: String): String = {

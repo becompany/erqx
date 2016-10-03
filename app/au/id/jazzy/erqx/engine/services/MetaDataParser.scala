@@ -34,6 +34,7 @@ object MetaDataParser {
     val fTitle = yaml.getString("title")
     val fId = yaml.getString("id").map(_.toString)
     val fDate = yaml.getDate("date")
+    val fAuthor = yaml.getString("author")
     val tags = yaml.getString("tags").toSeq.flatMap(_.split(" +").map(_.replace('+', ' ')))
 
     // Extract id and format from the name
@@ -60,8 +61,9 @@ object MetaDataParser {
     val id = fId getOrElse nId
     val title = fTitle orElse nTitle getOrElse id
     val date = fDate orElse nDate getOrElse new DateTime()
+    val author = fAuthor getOrElse "nobody"
     
-    BlogPost(id, path, title, date, permalinkTitle, format, tags.toSet, props)
+    BlogPost(id, path, title, date, author, permalinkTitle, format, tags.toSet, props)
   }
 
   /**
