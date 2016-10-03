@@ -7,7 +7,7 @@ import au.id.jazzy.erqx.engine.models._
 import org.joda.time.DateTime
 
 object FeedFormatter {
-  def atom(blog: Blog, posts: List[(BlogPost, String)], router: BlogReverseRouter)(implicit req: RequestHeader): Elem = {
+  def atom(blog: Blog, posts: List[(BlogPost, BlogPostContent)], router: BlogReverseRouter)(implicit req: RequestHeader): Elem = {
 
     // Use the current time as the update date if there are no blog posts.
     val blogUpdate = ISODateTimeFormat.dateTime.print(blog.posts.headOption.fold(new DateTime()){_.date})
@@ -43,7 +43,7 @@ object FeedFormatter {
             <id>{router.view(post).absoluteURL()}</id>
             <updated>{postDate}</updated>
             <published>{postDate}</published>
-            <content type="html">{PCData(content)}</content>
+            <content type="html">{PCData(content.lead + content.body)}</content>
             <dc:date>{postDate}</dc:date>
           </entry>
       }}

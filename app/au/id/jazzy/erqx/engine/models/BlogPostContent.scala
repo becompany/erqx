@@ -8,10 +8,11 @@ class BlogPostContent(text: String) {
 
   private lazy val parts = splitContent(text)
 
-  private lazy val summary: String = parts(2)
-  private lazy val body: String = parts(3)
+  private lazy val summaryMarkdown: String = parts(2)
+  private lazy val bodyMarkdown: String = parts(3)
 
-  val summaryHtml = renderWithoutLinks(summary)
-  val bodyHtml = render(summary + body)
+  lazy val summary = renderWithoutLinks(summaryMarkdown)
+  lazy val lead = render(summaryMarkdown)
+  lazy val body = render(bodyMarkdown)
 
 }

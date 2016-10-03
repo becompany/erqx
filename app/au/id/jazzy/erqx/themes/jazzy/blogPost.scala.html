@@ -1,13 +1,15 @@
+@import au.id.jazzy.erqx.engine.models.BlogPostContent
 @(blog: au.id.jazzy.erqx.engine.models.Blog,
     router: au.id.jazzy.erqx.engine.controllers.BlogReverseRouter,
     post: au.id.jazzy.erqx.engine.models.BlogPost,
-    content: String)(implicit req: RequestHeader, messages: Messages)
+    content: BlogPostContent)(implicit req: RequestHeader, messages: Messages)
 
 @blog.info.theme.main(blog, router, Some(post.title)) {
   <article>
     <h1 class="postTitle"><a href="@router.view(post)">@post.title</a></h1>
 
-    @Html(content)
+    @Html(content.lead)
+    @Html(content.body)
 
     <div class="postDate">@Messages("blog.posted.date", post.date.toDate)</div>
     <ul class="tags">

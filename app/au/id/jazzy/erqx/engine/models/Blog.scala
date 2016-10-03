@@ -42,7 +42,7 @@ trait BlogTheme {
    * The template for rendering a blog post
    */
   def blogPost(blog: Blog, router: BlogReverseRouter,
-               post: BlogPost, content: String)(implicit req: RequestHeader, messages: Messages): Html =
+               post: BlogPost, content: BlogPostContent)(implicit req: RequestHeader, messages: Messages): Html =
     au.id.jazzy.erqx.themes.jazzy.html.blogPost(blog, router, post, content)
 
   /**

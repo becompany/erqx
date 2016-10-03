@@ -2,13 +2,13 @@
         router: au.id.jazzy.erqx.engine.controllers.BlogReverseRouter,
         posts: List[(au.id.jazzy.erqx.engine.models.BlogPost, String)])(implicit messages: Messages)
 
-@for((post, content) <- posts) {
+@for((post, summary) <- posts) {
   <article>
     <h1 class="postTitle"><a href="@router.view(post)">@post.title</a></h1>
     <div class="postDate">@messages("blog.posted.date", post.date.toDate)</div>
 
     <div class="postContent">
-    @Html(content)
+    @Html(summary)
     </div>
 
   </article>

@@ -20,6 +20,24 @@ class MarkdownProcessorSpec extends Specification {
       html === "<p>foo bar baz</p>"
     }
 
+    "regex" in {
+      val md =
+        """{:.foo.bar}
+          |hello world
+        """.stripMargin
+      val result = """^\{\:(?:\.([a-zA-Z\-]+))+\}""".r.findFirstIn(md)
+      result === Some("{:.foo.bar}")
+    }
+
+    "apply CSS classes" in {
+      val md =
+        """{:.foo.bar}
+          |hello world
+        """.stripMargin
+      val html = render(md)
+      html === """<p class="foo bar">hello world</p>"""
+    }
+
   }
 
 }
