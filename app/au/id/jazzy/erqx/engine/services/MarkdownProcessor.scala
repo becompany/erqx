@@ -5,18 +5,13 @@ import laika.parse.markdown.Markdown
 import laika.render.HTML
 import laika.tree.Elements._
 
-import scala.util.matching.Regex.Match
-
 object MarkdownProcessor {
 
-  private val cssRegex = """(?s)^\{\:((?:\.[a-zA-Z\-])+)\}(.*)$""".r
+  private val cssRegex = """(?s)^\{\:\.((?:\.?[a-zA-Z\-]+)+)\}(.*)$""".r
 
-  private val f = """^(.+)$""".r
   private val cssRule: RewriteRule = {
-    case Paragraph(Text(cssRegex(classes, rest), _) +: tail, paragraphOptions) =>
-      println("here: " + classes)
-      Some(Paragraph(Text(rest) +: tail, paragraphOptions + Styles(classes.split('.'): _*)))
-
+    case Paragraph(Text(cssRegex(classes, text), _) +: tail, paragraphOptions) =>
+      Some(Paragraph(Text(text) +: tail, paragraphOptions + Styles(classes.split('.'): _*)))
   }
 
   private val transformer = Transform from Markdown to HTML usingRule cssRule
