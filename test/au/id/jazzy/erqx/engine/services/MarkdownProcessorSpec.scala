@@ -20,7 +20,7 @@ class MarkdownProcessorSpec extends Specification {
       renderWithoutLinks(md) === "<p>foo bar baz</p>"
     }
 
-    "apply CSS classes" in {
+    "parse Kramdown CSS classes" in {
       val md =
         """{:.foo.bar}
           |hello world""".stripMargin
@@ -28,15 +28,6 @@ class MarkdownProcessorSpec extends Specification {
       render(md) ===
         """<p class="foo bar">
           |hello world</p>""".stripMargin
-    }
-
-    "xxx" in {
-
-      case class Foo(a: String)
-      implicit def fooToNode(foo: Foo): Node = Text(s"[${foo.a}]")
-      val foo = Foo("x")
-      println(<p>{foo}</p>)
-      1 === 1
     }
 
   }

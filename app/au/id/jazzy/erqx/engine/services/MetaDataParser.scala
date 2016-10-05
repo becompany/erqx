@@ -35,7 +35,8 @@ object MetaDataParser {
     val fId = yaml.getString("id").map(_.toString)
     val fDate = yaml.getDate("date")
     val fAuthor = yaml.getString("author")
-    val tags = yaml.getString("tags").toSeq.flatMap(_.split(" +").map(_.replace('+', ' ')))
+    //val tags = yaml.getString("tags").toSeq.flatMap(_.split(" +").map(_.replace('+', ' ')))
+    val tags = yaml.getString("tags").toSeq.flatMap(_.split("\\s*,\\s*").map(_.trim))
 
     // Extract id and format from the name
     val (nId, format) = name match {

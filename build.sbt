@@ -16,7 +16,7 @@ scalaVersion := "2.11.8"
 // Production dependencies
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-doc" % "1.6.0",
-  "org.planet42" %% "laika-core" % "0.6.0",
+  "org.planet42" %% "laika-core" % "0.7.0-SNAPSHOT",
   "org.eclipse.jgit" % "org.eclipse.jgit" % "3.7.0.201502260915-r",
   "org.yaml" % "snakeyaml" % "1.12"
 )
