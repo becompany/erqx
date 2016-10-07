@@ -2,19 +2,17 @@ package au.id.jazzy.erqx.engine.services
 
 import laika.api._
 import laika.parse.kramdown.Kramdown
-import laika.render.HTML
+import laika.render.{HTML, HTMLWriter}
 import laika.tree.Elements._
 
 object MarkdownProcessor {
 
-  private val cssRegex = """(?s)^\{\:\.((?:\.?[a-zA-Z\-]+)+)\}(.*)$""".r
+  val renderer: HTMLWriter => RenderFunction = { out => {
+    case CodeBlock(language, content, opt) =>
+      out <<@ ("pre", opt) <<@ ("code", Styles(s"language-$language")) <<< content << "</code></pre>"
+  }}
 
-  private val cssRule: RewriteRule = {
-    case Paragraph(Text(cssRegex(classes, text), _) +: tail, paragraphOptions) =>
-      Some(Paragraph(Text(text) +: tail, paragraphOptions + Styles(classes.split('.'): _*)))
-  }
-
-  private val transformer = Transform from Kramdown to HTML usingRule cssRule
+  private val transformer = Transform from Kramdown to HTML rendering renderer
 
   private val noLinkRule: RewriteRule = {
     case ExternalLink(content, _, _, _) => Some(SpanSequence(content))

@@ -26,8 +26,25 @@ class MarkdownProcessorSpec extends Specification {
           |hello world""".stripMargin
 
       render(md) ===
-        """<p class="foo bar">
-          |hello world</p>""".stripMargin
+        """<p class="foo bar">hello world</p>""".stripMargin
+    }
+
+    "render code blocks without language" in {
+      val md =
+        """~~~~
+          |code
+          |~~~~""".stripMargin
+      render(md) ===
+        """<pre><code>code</code></pre>"""
+    }
+
+    "render code blocks with language" in {
+      val md =
+        """~~~~ scala
+          |code
+          |~~~~""".stripMargin
+      render(md) ===
+         """<pre><code class="language-scala">code</code></pre>"""
     }
 
   }
